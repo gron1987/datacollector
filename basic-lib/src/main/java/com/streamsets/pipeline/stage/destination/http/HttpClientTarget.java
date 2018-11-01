@@ -127,7 +127,7 @@ public class HttpClientTarget extends BaseTarget {
         if (response.hasEntity()) {
           responseBody = response.readEntity(String.class);
         }
-        if (conf.client.useOAuth2 && response.getStatus() == 403) {
+        if (conf.client.useOAuth2 && (response.getStatus() == 401 || response.getStatus() == 403)) {
           HttpStageUtil.getNewOAuth2Token(conf.client.oauth2, httpClientCommon.getClient());
         } else if (response.getStatus() < 200 || response.getStatus() >= 300) {
           errorRecordHandler.onError(
@@ -229,7 +229,7 @@ public class HttpClientTarget extends BaseTarget {
         responseBody = response.readEntity(String.class);
       }
       response.close();
-      if (conf.client.useOAuth2 && response.getStatus() == 403 && !failOn403) {
+      if (conf.client.useOAuth2 && (response.getStatus() == 401 || response.getStatus() == 403) && !failOn403) {
         HttpStageUtil.getNewOAuth2Token(conf.client.oauth2, httpClientCommon.getClient());
       } else if (response.getStatus() < 200 || response.getStatus() >= 300) {
         throw new OnRecordErrorException(

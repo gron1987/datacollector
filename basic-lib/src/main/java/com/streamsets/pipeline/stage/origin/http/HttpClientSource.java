@@ -409,7 +409,7 @@ public class HttpClientSource extends BaseSource {
         lastRequestTimedOut = false;
         final int status = response.getStatus();
         final boolean statusOk = status >= 200 && status < 300;
-        if (conf.client.useOAuth2 && status == 403) { // Token may have expired
+        if (conf.client.useOAuth2 && (status == 401 || status == 403)) { // Token may have expired
           if (gotNewToken) {
             throw new StageException(HTTP_21);
           }
